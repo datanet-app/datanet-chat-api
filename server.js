@@ -1,8 +1,7 @@
-// Import the http module to create a web server
-const http = require('http');
+import { createServer } from 'http';
 
 // Define the server
-const server = http.createServer((req, res) => {
+const server = createServer((req, res) => {
   // Set the response HTTP header
   res.writeHead(200, { 'Content-Type': 'text/plain' });
 
@@ -10,9 +9,9 @@ const server = http.createServer((req, res) => {
   res.end('Hello\n');
 });
 
-// Define the server's port and hostname
-const port = 3000;
-const hostname = 'localhost';
+// Use the PORT environment variable or default to 3000 if not set
+const port = process.env.PORT || 3000;
+const hostname = '0.0.0.0'; // for deployment purposes
 
 // Start the server
 server.listen(port, hostname, () => {
