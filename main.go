@@ -1,39 +1,29 @@
 package main
 
 import (
-	"encoding/json"
+	"datanet-chat-api/system/core"
 	"net/http"
 	"os"
-	"time"
 )
 
-type Response struct {
-	Status string `json:"status"`
-	Time   string `json:"time"`
-	Path   string `json:"path"`
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(Response{
-		Status: "OK",
-		Time:   time.Now().Format(time.RFC3339),
-		Path:   r.URL.Path,
-	})
-}
-
 func main() {
-	http.HandleFunc("/", handler)
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/check", core.ServerHealth)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8017"
 	}
 
+	server := http.Server{
+		Addr:    ":" + port,
+		Handler: core.EnableCORS(mux),
+	}
+
 	println("Server running on port " + port)
 
-	err := http.ListenAndServe(":"+port, nil)
+	err := server.ListenAndServe()
 	if err != nil {
 		panic(err)
 	}
